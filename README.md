@@ -31,6 +31,24 @@ Docker'а на ноутбуке нет? Тогда локально работа
 | `make seed` | перезалить учебные данные |
 | `make help` | список всех команд |
 
+## Как проверить, что сервис жив
+
+Если сервис не поднят — сначала `make up`. Дальше:
+
+```bash
+curl http://localhost:8080/health   # {"status":"ok","service":"carmoney-lab"} — сервис жив
+make ps                             # оба контейнера (backend, db) должны быть Up
+make logs                           # поток логов backend, выход — Ctrl+C
+```
+
+| Команда | Что делает |
+|---|---|
+| `make ps` | состояние контейнеров (`docker compose ps`) |
+| `make logs` | логи сервиса (`docker compose logs -f backend`) |
+
+- Порт снаружи по умолчанию 8080; если задан `APP_PORT`, подставьте его: `http://localhost:$APP_PORT/health`.
+- В `docker-compose.yml` healthcheck настроен только у `db` (`mysqladmin ping`); живость `backend` проверяется запросом к `/health`.
+
 ## API
 
 | Метод | Путь | Зачем |
